@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Web.Http.Description;
 using Swashbuckle.Swagger;
 
@@ -10,8 +9,6 @@ namespace Swashbuckle.OData
     {
         public SwashbuckleOptions(SwaggerProviderOptions swaggerProviderOptions)
         {
-            Contract.Requires(swaggerProviderOptions != null);
-
             VersionSupportResolver = swaggerProviderOptions.VersionSupportResolver;
             Schemes = swaggerProviderOptions.Schemes;
             SecurityDefinitions = swaggerProviderOptions.SecurityDefinitions;

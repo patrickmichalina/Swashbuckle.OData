@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Controllers;
@@ -36,9 +35,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private List<ApiParameterDescription> CreateParameterDescriptions(Operation operation, HttpActionDescriptor actionDescriptor)
         {
-            Contract.Requires(operation != null);
-            Contract.Requires(actionDescriptor != null);
-
             return operation.parameters?
                 .Select((parameter, index) => GetParameterDescription(parameter, index, actionDescriptor))
                 // Concat reflected parameter descriptors to ensure that parameters are not missed
@@ -64,26 +60,15 @@ namespace Swashbuckle.OData.Descriptions
 
         private HttpParameterDescriptor GetHttpParameterDescriptor(Parameter parameter, int index, HttpActionDescriptor actionDescriptor)
         {
-            Contract.Requires(_parameterMappers != null);
-            Contract.Ensures(Contract.Result<HttpParameterDescriptor>() != null);
-            Contract.Ensures(Contract.Result<HttpParameterDescriptor>().Configuration != null);
-
             var result = _parameterMappers
                 .Select(mapper => mapper.Map(parameter, index, actionDescriptor))
                 .FirstOrDefault(httpParameterDescriptor => httpParameterDescriptor != null);
 
-            Contract.Assume(result != null);
-            Contract.Assume(result.Configuration != null);
             return result;
         }
 
         private static string GetApiParameterDocumentation(Parameter parameter, HttpParameterDescriptor parameterDescriptor)
         {
-            Contract.Requires(parameter != null);
-            Contract.Requires(parameterDescriptor != null);
-
-            Contract.Assume(parameterDescriptor.Configuration != null);
-
             var documentationProvider = parameterDescriptor.Configuration.Services.GetDocumentationProvider();
 
             return documentationProvider != null
@@ -93,11 +78,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static string GetApiDocumentation(HttpActionDescriptor actionDescriptor, Operation operation)
         {
-            Contract.Requires(actionDescriptor != null);
-            Contract.Requires(operation != null);
-
-            Contract.Assume(actionDescriptor.Configuration != null);
-
             var documentationProvider = actionDescriptor.Configuration.Services.GetDocumentationProvider();
             return documentationProvider != null
                 ? documentationProvider.GetDocumentation(actionDescriptor)

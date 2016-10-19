@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 
@@ -20,13 +19,8 @@ namespace Swashbuckle.OData
         /// </returns>
         internal static T GetInstanceField<T>(this object instance, string fieldName, bool ensureNonNull = false)
         {
-            Contract.Requires(instance != null);
-            Contract.Ensures(Contract.Result<T>() != null || !ensureNonNull);
-
             var fieldInfo = instance.GetType().GetAllFields().SingleOrDefault(info => info.Name == fieldName);
-            Contract.Assume(fieldInfo != null);
             var value = fieldInfo.GetValue(instance);
-            Contract.Assume(value != null || !ensureNonNull);
             return value != null ? (T)value : default (T);
         }
 
@@ -55,12 +49,8 @@ namespace Swashbuckle.OData
         /// <param name="newValue">The new value.</param>
         internal static void SetInstanceProperty<T>(this object instance, string propertyName, T newValue)
         {
-            Contract.Requires(instance != null);
-            Contract.Requires(propertyName != null);
-
             const BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
             var propertyInfo = instance.GetType().GetProperty(propertyName, bindFlags);
-            Contract.Assume(propertyInfo != null);
             propertyInfo.SetValue(instance, newValue);
         }
 
@@ -73,11 +63,7 @@ namespace Swashbuckle.OData
         /// <returns></returns>
         internal static T InvokeFunction<T>(this object instance, string methodName)
         {
-            Contract.Requires(instance != null);
-            Contract.Requires(methodName != null);
-
             var methodInfo = instance.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
-            Contract.Assume(methodInfo != null);
 
             var result = methodInfo.Invoke(instance, null);
 

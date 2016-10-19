@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Web.Http.Controllers;
 using System.Web.Http.ModelBinding;
@@ -11,8 +10,6 @@ namespace Swashbuckle.OData.Descriptions
     {
         public static bool WillReadUri(this HttpParameterBinding parameterBinding)
         {
-            Contract.Requires(parameterBinding != null);
-
             var valueProviderParameterBinding = parameterBinding as IValueProviderParameterBinding;
             if (valueProviderParameterBinding != null)
             {

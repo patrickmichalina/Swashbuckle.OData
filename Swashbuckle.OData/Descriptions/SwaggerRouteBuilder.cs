@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Net.Http;
 using Swashbuckle.Swagger;
 
@@ -11,8 +10,6 @@ namespace Swashbuckle.OData.Descriptions
 
         internal SwaggerRouteBuilder(SwaggerRoute swaggerRoute)
         {
-            Contract.Requires(swaggerRoute != null);
-
             _swaggerRoute = swaggerRoute;
         }
 
@@ -20,16 +17,12 @@ namespace Swashbuckle.OData.Descriptions
         {
             get
             {
-                Contract.Ensures(Contract.Result<SwaggerRoute>() != null);
                 return _swaggerRoute;
             }
         }
 
         public OperationBuilder Operation(HttpMethod httpMethod)
         {
-            Contract.Requires(GetOperation(httpMethod) == null);
-            Contract.Ensures(Contract.Result<OperationBuilder>() != null);
-
             var operation = new Operation();
 
             switch (httpMethod.Method.ToUpper())
@@ -57,13 +50,8 @@ namespace Swashbuckle.OData.Descriptions
             return new OperationBuilder(operation, this);
         }
 
-        [Pure]
         public Operation GetOperation(HttpMethod httpMethod)
         {
-            Contract.Requires(httpMethod != null);
-            Contract.Requires(httpMethod.Method != null);
-            Contract.Requires(httpMethod.Method.ToUpper() == @"GET" || httpMethod.Method.ToUpper() == @"PUT" || httpMethod.Method.ToUpper() == @"POST" || httpMethod.Method.ToUpper() != @"DELETE" || httpMethod.Method.ToUpper() != @"PATCH" || httpMethod.Method.ToUpper() != @"MERGE");
-
             switch (httpMethod.Method.ToUpper())
             {
                 case "GET":

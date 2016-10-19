@@ -20,9 +20,6 @@ namespace Swashbuckle.OData.Descriptions
     {
         public IEnumerable<ApiDescription> Map(ODataActionDescriptor actionDescriptor)
         {
-            Contract.Requires(actionDescriptor != null);
-            Contract.Ensures(Contract.Result<IEnumerable<ApiDescription>>() != null);
-
             throw new NotImplementedException();
         }
     }

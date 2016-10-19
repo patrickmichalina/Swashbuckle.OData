@@ -1,4 +1,3 @@
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Web.Http.Controllers;
 using Swashbuckle.Swagger;
@@ -40,7 +39,6 @@ namespace Swashbuckle.OData.Descriptions
                 if (parameterDescriptor != null && !parameterDescriptor.IsODataLibraryType())
                 {
                     var httpControllerDescriptor = actionDescriptor.ControllerDescriptor;
-                    Contract.Assume(httpControllerDescriptor != null);
                     return new ODataParameterDescriptor(swaggerParameter.name, parameterDescriptor.ParameterType, parameterDescriptor.IsOptional, parameterDescriptor)
                     {
                         Configuration = httpControllerDescriptor.Configuration,

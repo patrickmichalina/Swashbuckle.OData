@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace Swashbuckle.OData
@@ -18,9 +17,6 @@ namespace Swashbuckle.OData
         /// </param>
         public static void AddRange<T>(this Collection<T> source, IEnumerable<T> collection)
         {
-            Contract.Requires(source != null);
-            Contract.Requires(collection != null);
-
             foreach (var item in collection)
             {
                 source.Add(item);
@@ -37,8 +33,6 @@ namespace Swashbuckle.OData
         /// </param>
         public static void AddRangeIfNotNull<T>(this List<T> source, IEnumerable<T> collection)
         {
-            Contract.Requires(source != null);
-
             if (collection != null)
             {
                 source.AddRange(collection);
@@ -53,8 +47,6 @@ namespace Swashbuckle.OData
         /// <param name="item">The item.</param>
         public static void AddIfNotNull<T>(this List<T> source, T item)
         {
-            Contract.Requires(source != null);
-
             if (item != null)
             {
                 source.Add(item);
@@ -72,8 +64,6 @@ namespace Swashbuckle.OData
         /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
         public static Collection<T> ToCollection<T>(this IEnumerable<T> source)
         {
-            Contract.Requires(source != null);
-
             return new Collection<T>(source.ToList());
         }
 

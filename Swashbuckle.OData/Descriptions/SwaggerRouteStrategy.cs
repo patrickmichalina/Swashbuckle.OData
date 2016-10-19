@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
@@ -29,8 +28,6 @@ namespace Swashbuckle.OData.Descriptions
         /// <param name="swaggerRouteGenerators">The swagger route generators.</param>
         public SwaggerRouteStrategy(IEnumerable<ISwaggerRouteGenerator> swaggerRouteGenerators)
         {
-            Contract.Requires(swaggerRouteGenerators != null);
-
             _swaggerRouteGenerators = swaggerRouteGenerators;
         }
 
@@ -43,9 +40,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static IEnumerable<ODataActionDescriptor> GetActionDescriptors(SwaggerRoute potentialSwaggerRoute, HttpConfiguration httpConfig)
         {
-            Contract.Requires(potentialSwaggerRoute != null);
-            Contract.Requires(httpConfig != null);
-
             var oDataActionDescriptors = new List<ODataActionDescriptor>();
 
             oDataActionDescriptors.AddIfNotNull(GetActionDescriptors(new HttpMethod("DELETE"), potentialSwaggerRoute.PathItem.delete, potentialSwaggerRoute, httpConfig));
@@ -59,9 +53,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static ODataActionDescriptor GetActionDescriptors(HttpMethod httpMethod, Operation potentialOperation, SwaggerRoute potentialSwaggerRoute, HttpConfiguration httpConfig)
         {
-            Contract.Requires(potentialOperation == null || httpConfig != null);
-            Contract.Requires(potentialSwaggerRoute != null);
-
             if (potentialOperation != null)
             {
                 var request = CreateHttpRequestMessage(httpMethod, potentialOperation, potentialSwaggerRoute, httpConfig);
@@ -81,12 +72,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static HttpRequestMessage CreateHttpRequestMessage(HttpMethod httpMethod, Operation potentialOperation, SwaggerRoute potentialSwaggerRoute, HttpConfiguration httpConfig)
         {
-            Contract.Requires(httpConfig != null);
-            Contract.Requires(potentialSwaggerRoute != null);
-            Contract.Ensures(Contract.Result<HttpRequestMessage>() != null);
-
-            Contract.Assume(potentialSwaggerRoute.ODataRoute.Constraints != null);
-
             var oDataAbsoluteUri = potentialOperation.GenerateSampleODataUri(ServiceRoot, potentialSwaggerRoute.PrefixedTemplate);
             var oDataRoute = potentialSwaggerRoute.ODataRoute;
 
@@ -100,7 +85,6 @@ namespace Swashbuckle.OData.Descriptions
             httpRequestMessage.SetConfiguration(httpConfig);
             httpRequestMessage.SetRequestContext(requestContext);
             var httpRequestMessageProperties = httpRequestMessage.ODataProperties();
-            Contract.Assume(httpRequestMessageProperties != null);
             httpRequestMessageProperties.Path = odataPath;
             httpRequestMessage.SetRouteData(oDataRoute.GetRouteData("/", httpRequestMessage));
             return httpRequestMessage;
@@ -108,10 +92,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static HttpActionDescriptor MapForRestierIfNecessary(HttpRequestMessage request, HttpActionDescriptor actionDescriptor)
         {
-            Contract.Requires(request != null);
-            Contract.Requires(actionDescriptor != null);
-            Contract.Requires(actionDescriptor.ControllerDescriptor != null);
-
             if (actionDescriptor.ControllerDescriptor.ControllerName == "Restier")
             {
                 var odataPath = request.ODataProperties().Path;
@@ -149,18 +129,9 @@ namespace Swashbuckle.OData.Descriptions
 
         private static ODataPath GenerateSampleODataPath(Operation operation, SwaggerRoute swaggerRoute, IServiceProvider rootContainer)
         {
-            Contract.Requires(operation != null);
-            Contract.Requires(swaggerRoute != null);
-            Contract.Requires(swaggerRoute.ODataRoute.Constraints != null);
-            Contract.Ensures(Contract.Result<ODataPath>() != null);
-
             var pathHandler = rootContainer.GetRequiredService<IODataPathHandler>();
-            Contract.Assume(pathHandler != null);
-
             var odataPath = operation.GenerateSampleODataUri(ServiceRoot, swaggerRoute.Template).Replace(ServiceRoot, string.Empty);
-
             var result = pathHandler.Parse(ServiceRoot, odataPath, rootContainer);
-            Contract.Assume(result != null);
             return result;
         }
     }

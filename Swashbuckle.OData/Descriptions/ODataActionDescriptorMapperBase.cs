@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -17,9 +16,6 @@ namespace Swashbuckle.OData.Descriptions
     {
         protected void PopulateApiDescriptions(ODataActionDescriptor oDataActionDescriptor, List<ApiParameterDescription> parameterDescriptions, string apiDocumentation, List<ApiDescription> apiDescriptions)
         {
-            Contract.Requires(oDataActionDescriptor != null);
-            Contract.Requires(apiDescriptions != null);
-
             // request formatters
             var bodyParameter = default(ApiParameterDescription);
             if (parameterDescriptions != null)
@@ -28,7 +24,6 @@ namespace Swashbuckle.OData.Descriptions
             }
 
             var httpConfiguration = oDataActionDescriptor.ActionDescriptor.Configuration;
-            Contract.Assume(httpConfiguration != null);
             var mediaTypeFormatterCollection = httpConfiguration.Formatters;
             var responseDescription = oDataActionDescriptor.ActionDescriptor.CreateResponseDescription();
             IEnumerable<MediaTypeFormatter> supportedRequestBodyFormatters = new List<MediaTypeFormatter>();
@@ -60,17 +55,14 @@ namespace Swashbuckle.OData.Descriptions
                 };
 
                 var apiSupportedResponseFormatters = apiDescription.SupportedResponseFormatters;
-                Contract.Assume(apiSupportedResponseFormatters != null);
                 apiSupportedResponseFormatters.AddRange(supportedResponseFormatters);
 
                 var apiSupportedRequestBodyFormatters = apiDescription.SupportedRequestBodyFormatters;
-                Contract.Assume(apiSupportedRequestBodyFormatters != null);
                 apiSupportedRequestBodyFormatters.AddRange(supportedRequestBodyFormatters);
 
                 if (parameterDescriptions != null)
                 {
                     var apiParameterDescriptions = apiDescription.ParameterDescriptions;
-                    Contract.Assume(apiParameterDescriptions != null);
                     apiParameterDescriptions.AddRange(parameterDescriptions);
                 }
 
@@ -129,31 +121,19 @@ namespace Swashbuckle.OData.Descriptions
         /// <returns>A collection of HttpMethods supported by the action.</returns>
         private static IEnumerable<HttpMethod> GetHttpMethodsSupportedByAction(IHttpRoute route, HttpActionDescriptor actionDescriptor)
         {
-            Contract.Requires(route != null);
-            Contract.Requires(actionDescriptor != null);
-            Contract.Ensures(Contract.Result<IEnumerable<HttpMethod>>() != null);
-
-            Contract.Assume(route.Constraints != null);
             var httpMethodConstraint = route.Constraints.Values.FirstOrDefault(c => c is HttpMethodConstraint) as HttpMethodConstraint;
 
             IList<HttpMethod> actionHttpMethods = actionDescriptor.SupportedHttpMethods;
-            Contract.Assume(actionHttpMethods != null);
             return httpMethodConstraint?.AllowedMethods?.Intersect(actionHttpMethods).ToList() ?? actionHttpMethods;
         }
 
         private static IEnumerable<MediaTypeFormatter> GetInnerFormatters(IEnumerable<MediaTypeFormatter> mediaTypeFormatters)
         {
-            Contract.Requires(mediaTypeFormatters != null);
-
             return mediaTypeFormatters.Select(Decorator.GetInner);
         }
 
         protected List<ApiParameterDescription> CreateParameterDescriptions(HttpActionDescriptor actionDescriptor)
         {
-            Contract.Requires(actionDescriptor != null);
-
-            Contract.Assume(actionDescriptor.ControllerDescriptor == null || actionDescriptor.ControllerDescriptor.Configuration != null);
-
             var parameterDescriptions = new List<ApiParameterDescription>();
             var actionBinding = GetActionBinding(actionDescriptor);
 
@@ -162,7 +142,6 @@ namespace Swashbuckle.OData.Descriptions
             {
                 foreach (var parameterBinding in parameterBindings)
                 {
-                    Contract.Assume(parameterBinding != null);
                     parameterDescriptions.Add(CreateParameterDescriptionFromBinding(parameterBinding));
                 }
             }
@@ -172,26 +151,15 @@ namespace Swashbuckle.OData.Descriptions
 
         private static HttpActionBinding GetActionBinding(HttpActionDescriptor actionDescriptor)
         {
-            Contract.Requires(actionDescriptor != null);
-            Contract.Ensures(Contract.Result<HttpActionBinding>() != null);
-
-            Contract.Assume(actionDescriptor.ControllerDescriptor?.Configuration != null);
-
             var controllerDescriptor = actionDescriptor.ControllerDescriptor;
             var controllerServices = controllerDescriptor.Configuration.Services;
             var actionValueBinder = controllerServices.GetActionValueBinder();
-            Contract.Assume(actionValueBinder != null);
             var actionBinding = actionValueBinder.GetBinding(actionDescriptor);
-            Contract.Assume(actionBinding != null);
             return actionBinding;
         }
 
         private static ApiParameterDescription CreateParameterDescriptionFromBinding(HttpParameterBinding parameterBinding)
         {
-            Contract.Requires(parameterBinding != null);
-
-            Contract.Assume(parameterBinding.Descriptor?.Configuration != null);
-
             var parameterDescription = CreateParameterDescriptionFromDescriptor(parameterBinding.Descriptor);
             if (parameterBinding.WillReadBody)
             {
@@ -207,10 +175,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static ApiParameterDescription CreateParameterDescriptionFromDescriptor(HttpParameterDescriptor parameter)
         {
-            Contract.Requires(parameter != null);
-
-            Contract.Assume(parameter.Configuration != null);
-
             return new ApiParameterDescription
             {
                 ParameterDescriptor = parameter,
@@ -222,9 +186,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static string GetApiParameterDocumentation(HttpParameterDescriptor parameterDescriptor)
         {
-            Contract.Requires(parameterDescriptor != null);
-            Contract.Requires(parameterDescriptor.Configuration != null);
-
             var documentationProvider = parameterDescriptor.Configuration.Services.GetDocumentationProvider();
 
             return documentationProvider?.GetDocumentation(parameterDescriptor);

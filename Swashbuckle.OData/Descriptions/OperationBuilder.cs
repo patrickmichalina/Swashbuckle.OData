@@ -1,4 +1,3 @@
-using System.Diagnostics.Contracts;
 using System.Web.OData.Formatter;
 using Microsoft.OData.Edm;
 using Swashbuckle.Swagger;
@@ -24,11 +23,7 @@ namespace Swashbuckle.OData.Descriptions
         /// <param name="parameterName">The name of the parameter as it appears in the path</param>
         public OperationBuilder PathParameter<T>(string parameterName)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(parameterName));
-            Contract.Ensures(Contract.Result<OperationBuilder>() != null);
-
             var edmType = GetEdmModel().GetEdmType(typeof (T));
-            Contract.Assume(edmType != null);
             _operation.Parameters().Parameter(parameterName, ParameterSource.Path.ToString().ToLower(), null, edmType, true);
 
             return this;
@@ -41,11 +36,7 @@ namespace Swashbuckle.OData.Descriptions
         /// <param name="parameterName">The name of the parameter as it appears in the method signature</param>
         public OperationBuilder BodyParameter<T>(string parameterName)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(parameterName));
-            Contract.Ensures(Contract.Result<OperationBuilder>() != null);
-
             var edmType = GetEdmModel().GetEdmType(typeof(T));
-            Contract.Assume(edmType != null);
             _operation.Parameters().Parameter(parameterName, ParameterSource.Body.ToString().ToLower(), null, edmType, true);
 
             return this;

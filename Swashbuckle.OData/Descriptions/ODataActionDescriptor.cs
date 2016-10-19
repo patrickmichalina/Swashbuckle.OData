@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Web.Http.Controllers;
 using System.Web.OData.Routing;
 using Swashbuckle.Swagger;
@@ -18,11 +17,6 @@ namespace Swashbuckle.OData.Descriptions
         /// <param name="operation">Additional metadata based about the action.</param>
         public ODataActionDescriptor(HttpActionDescriptor actionDescriptor, ODataRoute route, string relativePathTemplate, HttpRequestMessage request, Operation operation = null)
         {
-            Contract.Requires(actionDescriptor != null);
-            Contract.Requires(route != null);
-            Contract.Requires(relativePathTemplate != null);
-            Contract.Requires(request != null);
-
             ActionDescriptor = actionDescriptor;
             Route = route;
             RelativePathTemplate = relativePathTemplate;

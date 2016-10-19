@@ -23,12 +23,6 @@ namespace Swashbuckle.OData.Descriptions
     {
         public HttpParameterDescriptor Map(Parameter swaggerParameter, int parameterIndex, HttpActionDescriptor actionDescriptor)
         {
-            Contract.Requires(swaggerParameter != null);
-            Contract.Requires(parameterIndex >= 0);
-            Contract.Requires(actionDescriptor != null);
-            Contract.Requires(actionDescriptor.GetParameters() != null);
-            //Contract.Ensures(Contract.Result<HttpParameterDescriptor>() == null || Contract.Result<HttpParameterDescriptor>().Configuration != null);
-
             throw new NotImplementedException();
         }
     }

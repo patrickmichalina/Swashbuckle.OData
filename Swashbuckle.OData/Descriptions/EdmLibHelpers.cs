@@ -2,7 +2,6 @@
 // Licensed under the MIT License.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -82,67 +81,41 @@ namespace System.Web.OData.Formatter
 
         public static IEnumerable<IEdmStructuralProperty> GetKey(this IEdmEntityType edmEntityType)
         {
-            Contract.Requires(edmEntityType != null);
-            Contract.Ensures(Contract.Result<IEnumerable<IEdmStructuralProperty>>() != null);
-
             var result = edmEntityType.Key();
-            Contract.Assume(result != null);
             return result;
         }
 
         public static IEdmEntityType GetEntityType(this IEdmNavigationSource navigationSource)
         {
-            Contract.Requires(navigationSource != null);
-            Contract.Ensures(Contract.Result<IEdmEntityType>() != null);
-
             var result = navigationSource.EntityType();
-            Contract.Assume(result != null);
             return result;
         }
 
         public static IEdmType GetDefinition(this IEdmTypeReference edmTypeReference)
         {
-            Contract.Requires(edmTypeReference != null);
-            Contract.Ensures(Contract.Result<IEdmType>() != null);
-
             var result = edmTypeReference.Definition;
-            Contract.Assume(result != null);
             return result;
         }
 
         public static IEdmTypeReference GetPropertyType(this IEdmProperty edmProperty)
         {
-            Contract.Requires(edmProperty != null);
-            Contract.Ensures(Contract.Result<IEdmTypeReference>() != null);
-
             var result = edmProperty.Type;
-            Contract.Assume(result != null);
             return result;
         }
 
         public static IEdmTypeReference GetOperationType(this IEdmOperationParameter edmOperationParameter)
         {
-            Contract.Requires(edmOperationParameter != null);
-            Contract.Ensures(Contract.Result<IEdmTypeReference>() != null);
-
             var result = edmOperationParameter.Type;
-            Contract.Assume(result != null);
             return result;
         }
 
         public static IEdmType GetEdmType(this IEdmModel edmModel, Type clrType)
         {
-            Contract.Requires(edmModel != null);
-            Contract.Requires(clrType != null);
-
             return GetEdmType(edmModel, clrType, true);
         }
 
         private static IEdmType GetEdmType(IEdmModel edmModel, Type clrType, bool testCollections)
         {
-            Contract.Requires(edmModel != null);
-            Contract.Requires(clrType != null);
-
             var primitiveType = GetEdmPrimitiveTypeOrNull(clrType);
             if (primitiveType != null)
             {
@@ -154,9 +127,7 @@ namespace System.Web.OData.Formatter
                 if (enumerableOfT != null)
                 {
                     var genericArguments = enumerableOfT.GetGenericArguments();
-                    Contract.Assume(genericArguments != null);
                     var elementClrType = genericArguments[0];
-                    Contract.Assume(elementClrType != null);
                     var elementType = GetEdmType(edmModel, elementClrType, false);
                     if (elementType != null)
                     {
@@ -192,8 +163,6 @@ namespace System.Web.OData.Formatter
 
         public static IEdmTypeReference ToEdmTypeReference(this IEdmType edmType, bool isNullable)
         {
-            Contract.Requires(edmType != null);
-
             switch (edmType.TypeKind)
             {
                 case EdmTypeKind.Collection:
@@ -220,10 +189,6 @@ namespace System.Web.OData.Formatter
 
         public static Type GetClrType(IEdmTypeReference edmTypeReference, IEdmModel edmModel, IAssembliesResolver assembliesResolver)
         {
-            Contract.Requires(edmTypeReference != null);
-            Contract.Requires(edmModel != null);
-            Contract.Requires(assembliesResolver != null);
-
             var primitiveClrType = BuiltInTypesMapping.Where(kvp => edmTypeReference.GetDefinition().IsEquivalentTo(kvp.Value) && (!edmTypeReference.IsNullable || IsNullable(kvp.Key))).Select(kvp => kvp.Key).FirstOrDefault();
 
             if (primitiveClrType != null)
@@ -231,7 +196,6 @@ namespace System.Web.OData.Formatter
                 return primitiveClrType;
             }
             var edmType = edmTypeReference.GetDefinition();
-            Contract.Assume(edmType is IEdmSchemaType);
             var clrType = GetClrType(edmType, edmModel, assembliesResolver);
             if (clrType != null && clrType.IsEnum && edmTypeReference.IsNullable)
             {
@@ -243,10 +207,6 @@ namespace System.Web.OData.Formatter
 
         public static Type GetClrType(IEdmType edmType, IEdmModel edmModel, IAssembliesResolver assembliesResolver)
         {
-            Contract.Requires(edmType is IEdmSchemaType);
-            Contract.Requires(edmModel != null);
-            Contract.Requires(assembliesResolver != null);
-
             var edmSchemaType = (IEdmSchemaType) edmType;
 
             var annotation = edmModel.GetAnnotationValue<ClrTypeAnnotation>(edmSchemaType);
@@ -271,16 +231,12 @@ namespace System.Web.OData.Formatter
 
         public static IEdmPrimitiveType GetEdmPrimitiveTypeOrNull(Type clrType)
         {
-            Contract.Requires(clrType != null);
-
             IEdmPrimitiveType primitiveType;
             return BuiltInTypesMapping.TryGetValue(clrType, out primitiveType) ? primitiveType : null;
         }
 
         public static IEdmPrimitiveTypeReference GetEdmPrimitiveTypeReferenceOrNull(Type clrType)
         {
-            Contract.Requires(clrType != null);
-
             var primitiveType = GetEdmPrimitiveTypeOrNull(clrType);
             return primitiveType != null ? CoreModel.GetPrimitive(primitiveType.PrimitiveKind, IsNullable(clrType)) : null;
         }
@@ -289,16 +245,12 @@ namespace System.Web.OData.Formatter
         // to a valid EDM literal (the C# type name IEnumerable<int>).
         public static string EdmName(this Type clrType)
         {
-            Contract.Requires(clrType != null);
-
             // We cannot use just Type.Name here as it doesn't work for generic types.
             return MangleClrTypeName(clrType);
         }
 
         public static string EdmFullName(this Type clrType)
         {
-            Contract.Requires(clrType != null);
-
             return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", clrType.Namespace, clrType.EdmName());
         }
 
@@ -309,31 +261,23 @@ namespace System.Web.OData.Formatter
 
         public static bool IsNullable(Type type)
         {
-            Contract.Requires(type != null);
-
             return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
         }
 
         private static Type ExtractGenericInterface(Type queryType, Type interfaceType)
         {
-            Contract.Requires(queryType != null);
-
             Func<Type, bool> matchesInterface = t => t.IsGenericType && t.GetGenericTypeDefinition() == interfaceType;
             return matchesInterface(queryType) ? queryType : queryType.GetInterfaces().FirstOrDefault(matchesInterface);
         }
 
         private static IEnumerable<Type> GetMatchingTypes(string edmFullName, IAssembliesResolver assembliesResolver)
         {
-            Contract.Requires(assembliesResolver != null);
-
             return TypeHelper.GetLoadedTypes(assembliesResolver).Where(t => t.IsPublic && t.EdmFullName() == edmFullName);
         }
 
         // TODO (workitem 336): Support nested types and anonymous types.
         private static string MangleClrTypeName(Type type)
         {
-            Contract.Requires(type != null);
-
             return !type.IsGenericType ? type.Name : string.Format(CultureInfo.InvariantCulture, "{0}Of{1}", type.Name.Replace('`', '_'), string.Join("_", type.GetGenericArguments().Select(MangleClrTypeName)));
         }
     }

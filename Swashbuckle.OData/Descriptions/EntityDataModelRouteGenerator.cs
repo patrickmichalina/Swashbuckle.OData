@@ -2,7 +2,6 @@
 // Licensed under the MIT License.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Web.Http;
 using System.Web.OData.Formatter;
@@ -28,9 +27,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static List<SwaggerRoute> Generate(ODataRoute oDataRoute)
         {
-            Contract.Requires(oDataRoute != null);
-            Contract.Requires(oDataRoute.Constraints != null);
-
             var routes = new List<SwaggerRoute>();
 
             routes.AddRangeIfNotNull(GenerateEntitySetRoutes(oDataRoute));
@@ -43,9 +39,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static IEnumerable<SwaggerRoute> GenerateEntitySetRoutes(ODataRoute oDataRoute)
         {
-            Contract.Requires(oDataRoute != null);
-            Contract.Requires(oDataRoute.Constraints != null);
-
             return oDataRoute.GetEdmModel()
                 .EntityContainer
                 .EntitySets()?
@@ -54,9 +47,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static IEnumerable<SwaggerRoute> GenerateEntityRoutes(ODataRoute oDataRoute)
         {
-            Contract.Requires(oDataRoute != null);
-            Contract.Requires(oDataRoute.Constraints != null);
-
             return oDataRoute.GetEdmModel()
                 .EntityContainer
                 .EntitySets()?
@@ -65,9 +55,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static IEnumerable<SwaggerRoute> GenerateOperationImportRoutes(ODataRoute oDataRoute)
         {
-            Contract.Requires(oDataRoute != null);
-            Contract.Requires(oDataRoute.Constraints != null);
-
             return oDataRoute.GetEdmModel()
                 .EntityContainer
                 .OperationImports()?
@@ -81,9 +68,6 @@ namespace Swashbuckle.OData.Descriptions
         /// <returns></returns>
         private static IEnumerable<SwaggerRoute> GenerateOperationRoutes(ODataRoute oDataRoute)
         {
-            Contract.Requires(oDataRoute != null);
-            Contract.Requires(oDataRoute.Constraints != null);
-
             var routes = new List<SwaggerRoute>();
 
             var edmSchemaElements = oDataRoute.GetEdmModel().SchemaElements;
@@ -101,7 +85,6 @@ namespace Swashbuckle.OData.Descriptions
                     if (edmOperationParameters != null && edmOperationParameters.Any())
                     {
                         var boundParameter = edmOperationParameters.First();
-                        Contract.Assume(boundParameter != null);
 
                         var boundType = boundParameter.GetOperationType().GetDefinition();
 
@@ -110,7 +93,6 @@ namespace Swashbuckle.OData.Descriptions
                         {
                             var entityType = (IEdmEntityType)boundType;
                             var edmEntitySets = oDataRoute.GetEdmModel().EntityContainer.EntitySets();
-                            Contract.Assume(edmEntitySets != null);
                             routes.AddRange(edmEntitySets.Where(es => es.GetEntityType().Equals(entityType)).Select(entitySet => new SwaggerRoute(ODataSwaggerUtilities.GetPathForOperationOfEntity(operation, entitySet, oDataRoute), oDataRoute, ODataSwaggerUtilities.CreateSwaggerPathForOperationOfEntity(operation, entitySet, oDataRoute))));
                         }
                         else if (boundType.TypeKind == EdmTypeKind.Collection)
@@ -121,7 +103,6 @@ namespace Swashbuckle.OData.Descriptions
                             {
                                 var entityType = (IEdmEntityType)collectionType.ElementType?.GetDefinition();
                                 var edmEntitySets = oDataRoute.GetEdmModel().EntityContainer.EntitySets();
-                                Contract.Assume(edmEntitySets != null);
                                 routes.AddRange(edmEntitySets.Where(es => es.GetEntityType().Equals(entityType)).Select(entitySet => new SwaggerRoute(ODataSwaggerUtilities.GetPathForOperationOfEntitySet(operation, entitySet, oDataRoute), oDataRoute, ODataSwaggerUtilities.CreateSwaggerPathForOperationOfEntitySet(operation, entitySet, oDataRoute))));
                             }
                         }

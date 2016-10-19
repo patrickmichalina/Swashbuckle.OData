@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,8 +12,6 @@ namespace Swashbuckle.OData.Descriptions
     {
         public RestierHttpActionDescriptor(string actionName, Type returnType, Collection<HttpMethod> supportedHttpMethods, string entitySetName)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(entitySetName));
-
             SupportedHttpMethods = supportedHttpMethods;
             EntitySetName = entitySetName;
             ActionName = actionName;

@@ -10,8 +10,6 @@ namespace Swashbuckle.OData.Descriptions
     {
         public static ParameterSource MapToSwaggerSource(this Parameter parameter)
         {
-            Contract.Requires(parameter != null);
-
             switch (parameter.@in)
             {
                 case "query":
@@ -29,8 +27,6 @@ namespace Swashbuckle.OData.Descriptions
 
         public static ApiParameterSource MapToApiParameterSource(this Parameter parameter)
         {
-            Contract.Requires(parameter != null);
-
             switch (parameter.@in)
             {
                 case "query":
@@ -48,8 +44,6 @@ namespace Swashbuckle.OData.Descriptions
 
         public static Type GetClrType(this Parameter parameter)
         {
-            Contract.Requires(parameter != null);
-
             var type = parameter.type;
             var format = parameter.format;
 
@@ -95,9 +89,6 @@ namespace Swashbuckle.OData.Descriptions
 
         public static string GenerateSamplePathParameterValue(this Parameter parameter)
         {
-            Contract.Requires(parameter != null);
-            Contract.Requires(parameter.@in == "path");
-
             var type = parameter.type;
             var format = parameter.format;
 
@@ -145,11 +136,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static Type GetEntityTypeForBodyParameter(Parameter parameter)
         {
-            Contract.Requires(parameter != null);
-            Contract.Requires(parameter.schema != null);
-            Contract.Requires(!string.IsNullOrWhiteSpace(parameter.schema.@ref));
-            Contract.Requires(parameter.@in == "body");
-
             return parameter.schema.GetReferencedType();
         }
     }

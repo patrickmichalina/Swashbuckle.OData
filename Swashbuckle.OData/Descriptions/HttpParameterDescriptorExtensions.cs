@@ -8,15 +8,11 @@ namespace Swashbuckle.OData.Descriptions
     {
         public static bool IsODataLibraryType(this HttpParameterDescriptor parameterDescriptor)
         {
-            Contract.Requires(parameterDescriptor != null);
-
             return IsODataODataActionParameters(parameterDescriptor) || IsODataQueryOptions(parameterDescriptor);
         }
 
         private static bool IsODataODataActionParameters(this HttpParameterDescriptor parameterDescriptor)
         {
-            Contract.Requires(parameterDescriptor != null);
-
             var parameterType = parameterDescriptor.ParameterType;
             Contract.Assume(parameterType != null);
 
@@ -25,8 +21,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static bool IsODataQueryOptions(this HttpParameterDescriptor parameterDescriptor)
         {
-            Contract.Requires(parameterDescriptor != null);
-
             var parameterType = parameterDescriptor.ParameterType;
             Contract.Assume(parameterType != null);
 

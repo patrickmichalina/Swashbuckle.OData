@@ -20,9 +20,6 @@ namespace Swashbuckle.OData.Descriptions
     {
         public IEnumerable<ODataActionDescriptor> Generate(HttpConfiguration httpConfig)
         {
-            Contract.Requires(httpConfig != null);
-            Contract.Ensures(Contract.Result<IEnumerable<ODataActionDescriptor>>() != null);
-
             throw new NotImplementedException();
         }
     }

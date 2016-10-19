@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -18,9 +17,6 @@ namespace Swashbuckle.OData
 
         internal ODataSwaggerDocsConfig(SwaggerDocsConfig swaggerDocsConfig, HttpConfiguration httpConfiguration)
         {
-            Contract.Requires(httpConfiguration != null);
-            Contract.Requires(swaggerDocsConfig != null);
-
             Configuration = httpConfiguration;
             _swaggerDocsConfig = swaggerDocsConfig;
             _includeNavigationProperties = false;

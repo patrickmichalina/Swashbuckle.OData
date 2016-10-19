@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Web.Http.Description;
@@ -11,12 +10,7 @@ namespace Swashbuckle.OData
     {
         public void Apply(SwaggerDocument swaggerDoc, SchemaRegistry schemaRegistry, IApiExplorer apiExplorer)
         {
-            Contract.Assume(swaggerDoc != null);
-            Contract.Assume(schemaRegistry != null);
-            Contract.Assume(apiExplorer != null);
-
             var pathItems = swaggerDoc.paths.Values;
-
             var deletes = pathItems.Select(pathItem => pathItem.delete).Where(operation => operation != null);
             var gets = pathItems.Select(pathItem => pathItem.get).Where(operation => operation != null);
             var heads = pathItems.Select(pathItem => pathItem.head).Where(operation => operation != null);
@@ -40,8 +34,6 @@ namespace Swashbuckle.OData
 
         private static void AppendParameterNamesToOperationId(List<Operation> allOperations)
         {
-            Contract.Requires(allOperations != null);
-
             foreach (var operation in allOperations.Where(operation => !operation.operationId.Contains("By") 
                                                                         && operation.parameters != null
                                                                         && operation.parameters.Any(p => p.@in == "path")))
@@ -58,8 +50,6 @@ namespace Swashbuckle.OData
 
         private static void UniquifyOperationId(List<Operation> allOperations)
         {
-            Contract.Requires(allOperations != null);
-
             foreach (var operationsWithDupIds in allOperations.GroupBy(operation => operation.operationId).Where(grouping => grouping.Count() > 1))
             {
                 var sequence = 1;

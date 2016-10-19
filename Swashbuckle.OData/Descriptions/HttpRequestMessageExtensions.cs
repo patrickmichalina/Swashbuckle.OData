@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -12,8 +11,6 @@ namespace Swashbuckle.OData.Descriptions
     {
         public static HttpActionDescriptor GetHttpActionDescriptor(this HttpRequestMessage request, HttpConfiguration httpConfig)
         {
-            Contract.Ensures(Contract.Result<HttpActionDescriptor>() == null || Contract.Result<HttpActionDescriptor>().ControllerDescriptor != null);
-
             HttpActionDescriptor actionDescriptor = null;
 
             var controllerDescriptor = request.GetControllerDescriptor();
@@ -25,8 +22,6 @@ namespace Swashbuckle.OData.Descriptions
                     : GetHttpActionDescriptorForODataController(request, httpConfig, controllerDescriptor);
             }
 
-            Contract.Assume(actionDescriptor == null || actionDescriptor.ControllerDescriptor != null);
-
             return actionDescriptor;
         }
 
@@ -35,7 +30,6 @@ namespace Swashbuckle.OData.Descriptions
             HttpActionDescriptor actionDescriptor;
 
             var perControllerConfig = controllerDescriptor.Configuration;
-            Contract.Assume(perControllerConfig != null);
 
             request.SetConfiguration(perControllerConfig);
             var requestContext = request.GetRequestContext();
@@ -53,7 +47,6 @@ namespace Swashbuckle.OData.Descriptions
             try
             {
                 var actionSelector = perControllerConfig.Services?.GetActionSelector();
-                Contract.Assume(actionSelector != null);
                 actionDescriptor = actionSelector.SelectAction(controllerContext);
             }
             catch (HttpResponseException ex)
@@ -108,9 +101,6 @@ namespace Swashbuckle.OData.Descriptions
 
         public static HttpControllerDescriptor GetControllerDescriptor(this HttpRequestMessage request)
         {
-            Contract.Requires(request.GetConfiguration() != null);
-            Contract.Requires(request.GetConfiguration().Services.GetHttpControllerSelector() != null);
-
             try
             {
                 return request.GetConfiguration().Services.GetHttpControllerSelector().SelectController(request);

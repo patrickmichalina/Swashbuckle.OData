@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
@@ -27,9 +26,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static IEnumerable<ODataActionDescriptor> GetODataActionDescriptorsFromAttributeRoutes(ODataRoute oDataRoute, HttpConfiguration httpConfig)
         {
-            Contract.Requires(oDataRoute != null);
-            Contract.Requires(oDataRoute.Constraints != null);
-
             var rootContainer = httpConfig.GetODataRootContainer(oDataRoute);
             var routingConventions = rootContainer.GetServices<IODataRoutingConvention>();
             var attributeRoutingConvention = routingConventions.OfType<AttributeRoutingConvention>().SingleOrDefault();
@@ -47,16 +43,9 @@ namespace Swashbuckle.OData.Descriptions
 
         private static ODataActionDescriptor GetODataActionDescriptorFromAttributeRoute(HttpActionDescriptor actionDescriptor, ODataRoute oDataRoute, HttpConfiguration httpConfig)
         {
-            Contract.Requires(actionDescriptor != null);
-            Contract.Requires(oDataRoute != null);
-            Contract.Ensures(Contract.Result<ODataActionDescriptor>() != null);
-
             var odataRoutePrefixAttribute = actionDescriptor.ControllerDescriptor.GetCustomAttributes<ODataRoutePrefixAttribute>()?.FirstOrDefault();
             var odataRouteAttribute = actionDescriptor.GetCustomAttributes<ODataRouteAttribute>()?.FirstOrDefault();
-
-            Contract.Assume(odataRouteAttribute != null);
             var pathTemplate = HttpUtility.UrlDecode(oDataRoute.GetRoutePrefix().AppendPathSegment(GetODataPathTemplate(odataRoutePrefixAttribute?.Prefix, odataRouteAttribute.PathTemplate)));
-            Contract.Assume(pathTemplate != null);
 
             return new ODataActionDescriptor(actionDescriptor, oDataRoute, pathTemplate, CreateHttpRequestMessage(actionDescriptor, oDataRoute, httpConfig));
         }
@@ -93,13 +82,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static HttpRequestMessage CreateHttpRequestMessage(HttpActionDescriptor actionDescriptor, ODataRoute oDataRoute, HttpConfiguration httpConfig)
         {
-            Contract.Requires(httpConfig != null);
-            Contract.Requires(oDataRoute != null);
-            Contract.Requires(httpConfig != null);
-            Contract.Ensures(Contract.Result<HttpRequestMessage>() != null);
-
-            Contract.Assume(oDataRoute.Constraints != null);
-
             var httpRequestMessage = new HttpRequestMessage(actionDescriptor.SupportedHttpMethods.First(), "http://any/");
 
             var requestContext = new HttpRequestContext
@@ -110,7 +92,6 @@ namespace Swashbuckle.OData.Descriptions
             httpRequestMessage.SetRequestContext(requestContext);
 
             var httpRequestMessageProperties = httpRequestMessage.ODataProperties();
-            Contract.Assume(httpRequestMessageProperties != null);
             httpRequestMessage.CreateRequestContainer(oDataRoute.PathRouteConstraint.RouteName);
             return httpRequestMessage;
         }

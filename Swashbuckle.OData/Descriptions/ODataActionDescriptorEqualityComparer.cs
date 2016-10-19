@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 namespace Swashbuckle.OData.Descriptions
 {
@@ -27,8 +26,6 @@ namespace Swashbuckle.OData.Descriptions
 
         private static string NormalizeRelativePath(string path)
         {
-            Contract.Requires(path != null);
-
             return path.Replace("()", string.Empty);
         }
     }

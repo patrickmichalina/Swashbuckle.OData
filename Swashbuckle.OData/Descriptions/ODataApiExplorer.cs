@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -23,10 +22,6 @@ namespace Swashbuckle.OData.Descriptions
         /// <param name="actionDescriptorMappers">A set of strategires to map a <see cref="ODataActionDescriptor"/> to an <see cref="ApiDescription"/></param>
         public ODataApiExplorer(HttpConfiguration httpConfig, IEnumerable<IODataActionDescriptorExplorer> actionDescriptorExplorers, IEnumerable<IODataActionDescriptorMapper> actionDescriptorMappers)
         {
-            Contract.Requires(httpConfig != null);
-            Contract.Requires(actionDescriptorExplorers != null);
-            Contract.Requires(actionDescriptorMappers != null);
-
             _httpConfig = httpConfig;
             _actionDescriptorExplorers = actionDescriptorExplorers;
             _actionDescriptorMappers = actionDescriptorMappers;

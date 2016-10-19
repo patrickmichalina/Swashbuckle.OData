@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -25,8 +24,6 @@ namespace Swashbuckle.OData
         public ODataSwaggerProvider(ISwaggerProvider defaultProvider, SwaggerDocsConfig swaggerDocsConfig) 
             : this(defaultProvider, swaggerDocsConfig, GlobalConfiguration.Configuration)
         {
-            Contract.Requires(defaultProvider != null);
-            Contract.Requires(swaggerDocsConfig != null);
         }
 
         /// <summary>
@@ -38,10 +35,6 @@ namespace Swashbuckle.OData
         /// <param name="httpConfig">The HttpConfiguration that contains the OData Edm Model.</param>
         public ODataSwaggerProvider(ISwaggerProvider defaultProvider, SwaggerDocsConfig swaggerDocsConfig, HttpConfiguration httpConfig)
         {
-            Contract.Requires(defaultProvider != null);
-            Contract.Requires(swaggerDocsConfig != null);
-            Contract.Requires(httpConfig != null);
-
             _defaultProvider = defaultProvider;
             _config = new ODataSwaggerDocsConfig(swaggerDocsConfig, httpConfig);
         }
@@ -87,8 +80,6 @@ namespace Swashbuckle.OData
 
             foreach(var filter in swashbuckleOptions.DocumentFilters)
             {
-                Contract.Assume(filter != null);
-
                 filter.Apply(odataSwaggerDoc, schemaRegistry, _config.GetApiExplorer());
             }
 
@@ -97,11 +88,7 @@ namespace Swashbuckle.OData
 
         private SwaggerDocument MergeODataAndWebApiSwaggerDocs(string rootUrl, string apiVersion, SwaggerDocument odataSwaggerDoc)
         {
-            Contract.Requires(odataSwaggerDoc != null);
-
             var webApiSwaggerDoc = _defaultProvider.GetSwagger(rootUrl, apiVersion);
-
-            Contract.Assume(webApiSwaggerDoc != null);
 
             webApiSwaggerDoc.paths = webApiSwaggerDoc.paths.UnionEvenIfNull(odataSwaggerDoc.paths).ToLookup(pair => pair.Key, pair => pair.Value)
                          .ToDictionary(group => group.Key, group => group.First());
@@ -126,9 +113,6 @@ namespace Swashbuckle.OData
 
         private PathItem CreatePathItem(IEnumerable<ApiDescription> apiDescriptions, SchemaRegistry schemaRegistry)
         {
-            Contract.Requires(apiDescriptions != null);
-            Contract.Requires(schemaRegistry != null);
-
             var pathItem = new PathItem();
 
             // Group further by http method
@@ -137,16 +121,12 @@ namespace Swashbuckle.OData
 
             foreach (var group in perMethodGrouping)
             {
-                Contract.Assume(group != null);
-
                 var httpMethod = group.Key;
 
                 var apiDescription = group.Count() == 1
                     ? group.First()
                     : _config.GetSwashbuckleOptions().ConflictingActionsResolver(group);
 
-                Contract.Assume(apiDescription != null);
-                Contract.Assume(apiDescription.ParameterDescriptions != null);
                 switch (httpMethod)
                 {
                     case "get":
@@ -175,11 +155,6 @@ namespace Swashbuckle.OData
 
         private Operation CreateOperation(ApiDescription apiDescription, SchemaRegistry schemaRegistry)
         {
-            Contract.Requires(apiDescription != null);
-            Contract.Requires(schemaRegistry != null);
-            Contract.Requires(apiDescription.ParameterDescriptions != null);
-
-
             var edmModel = ((ODataRoute)apiDescription.Route).GetEdmModel();
 
             var parameters = apiDescription.ParameterDescriptions
@@ -213,7 +188,6 @@ namespace Swashbuckle.OData
 
             foreach (var filter in _config.GetSwashbuckleOptions().OperationFilters)
             {
-                Contract.Assume(filter != null);
                 filter.Apply(operation, schemaRegistry, apiDescription);
             }
 
@@ -222,10 +196,6 @@ namespace Swashbuckle.OData
 
         private static Parameter CreateParameter(ApiParameterDescription paramDesc, bool inPath, SchemaRegistry schemaRegistry, IEdmModel edmModel)
         {
-            Contract.Requires(paramDesc != null);
-            Contract.Requires(schemaRegistry != null);
-            Contract.Assume(paramDesc.ParameterDescriptor != null);
-
             var @in = inPath
                 ? "path"
                 : paramDesc.Source == ApiParameterSource.FromUri ? "query" : "body";
@@ -249,10 +219,6 @@ namespace Swashbuckle.OData
 
         private static Parameter CreateParameter(SwaggerApiParameterDescription paramDesc, bool inPath, SchemaRegistry schemaRegistry, IEdmModel edmModel)
         {
-            Contract.Requires(paramDesc != null);
-            Contract.Requires(schemaRegistry != null);
-            Contract.Assume(paramDesc.ParameterDescriptor != null);
-
             var @in = inPath
                 ? "path"
                 : MapToSwaggerParameterLocation(paramDesc.SwaggerSource);
@@ -266,9 +232,6 @@ namespace Swashbuckle.OData
                 @default = paramDesc.ParameterDescriptor.DefaultValue
             };
 
-
-            var parameterType = paramDesc.ParameterDescriptor.ParameterType;
-            Contract.Assume(parameterType != null);
             var schema = schemaRegistry.GetOrRegisterParameterType(edmModel, paramDesc.ParameterDescriptor);
             if (parameter.@in == "body")
                 parameter.schema = schema;
@@ -299,17 +262,12 @@ namespace Swashbuckle.OData
 
         private IEnumerable<ApiDescription> GetApiDescriptionsFor(string apiVersion)
         {
-            Contract.Ensures(Contract.Result<IEnumerable<ApiDescription>>() != null);
-
             var odataApiExplorer = _config.GetApiExplorer();
-
-            Contract.Assume(_config.GetSwashbuckleOptions().VersionSupportResolver == null || odataApiExplorer.ApiDescriptions != null);
 
             var result = _config.GetSwashbuckleOptions().VersionSupportResolver == null 
                 ? odataApiExplorer.ApiDescriptions 
                 : odataApiExplorer.ApiDescriptions.Where(apiDesc => _config.GetSwashbuckleOptions().VersionSupportResolver(apiDesc, apiVersion));
 
-            Contract.Assume(result != null);
             return result;
         }
 

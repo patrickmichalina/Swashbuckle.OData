@@ -20,9 +20,6 @@ namespace Swashbuckle.OData.Descriptions
     {
         public IEnumerable<SwaggerRoute> Generate(HttpConfiguration httpConfig)
         {
-            Contract.Requires(httpConfig != null);
-            Contract.Ensures(Contract.Result<IEnumerable<SwaggerRoute>>() != null);
-
             throw new NotImplementedException();
         }
     }

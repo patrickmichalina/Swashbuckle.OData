@@ -36,13 +36,8 @@ namespace Swashbuckle.OData
 
         private static void RegisterReferencedTypes(SchemaRegistry registry, IEdmModel edmModel, Schema schema)
         {
-            Contract.Requires(registry != null);
-            Contract.Requires(schema != null);
-
             while (true)
             {
-                Contract.Assume(schema != null);
-
                 var referencedType = schema.GetReferencedType();
 
                 if (referencedType != null)
@@ -73,8 +68,6 @@ namespace Swashbuckle.OData
 
         private static void FixSchemaReference(SchemaRegistry registry, Schema schema, Type referencedType)
         {
-            Contract.Requires(schema.@ref != null);
-
             var schemaIdSelector = registry.GetInstanceField<Func<Type, string>>("_schemaIdSelector", true);
 
             schema.@ref = "#/definitions/" + schemaIdSelector(referencedType);
@@ -83,7 +76,6 @@ namespace Swashbuckle.OData
         private static Schema HandleGenericODataTypeThatShouldBeUnwrapped(SchemaRegistry registry, IEdmModel edmModel, Type type)
         {
             var genericArguments = type.GetGenericArguments();
-            Contract.Assume(genericArguments != null);
             var schema = registry.GetOrRegister(genericArguments[0]);
             ApplyEdmModelPropertyNamesToSchema(registry, edmModel, genericArguments[0]);
             return schema;
@@ -96,9 +88,6 @@ namespace Swashbuckle.OData
 
         public static Schema GetOrRegisterResponseType(this SchemaRegistry registry, IEdmModel edmModel, Type type)
         {
-            Contract.Requires(registry != null);
-            Contract.Requires(type != null);
-
             if (IsAGenericODataTypeThatShouldBeUnwrapped(type, MessageDirection.Output))
             {
                 return HandleGenericODataTypeThatShouldBeUnwrapped(registry, edmModel, type);
